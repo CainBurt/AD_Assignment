@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+    <h1>Home Page</h1>
+    <div>
+        <h2>Login info:</h2>
+        {%if user_data %}
+
+        <h1>Name</h1>
+        <h2>{{ user_data['name'] }}</h2>
+        <h1>Email</h1>
+        <h2>{{ user_data['email'] }}</h2>
+
+        {% elif error_message %}
+        <p>Error: {{ error_message }}</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
