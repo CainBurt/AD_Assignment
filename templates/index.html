@@ -2,21 +2,34 @@
 {% block content %}
 
 <div>
-    <h1>Home Page</h1>
-    <div>
-        <h2>Login info:</h2>
+    <div class="rounded bg-light mt-2">
         {%if user_data %}
-
-        <h1>Name</h1>
-        <h2>{{ user_data['name'] }}</h2>
-        <h1>Email</h1>
-        <h2>{{ user_data['email'] }}</h2>
-
-        {% elif error_message %}
-        <p>Error: {{ error_message }}</p>
+        <h1>Logged in as: {{ user_data['name'] }}</h1>
+        {% else %}
+        <h1>You are not logged in</h1>
         {% endif %}
+        
+    </div>
+
+    <div class="container">
+        {% for d in data %}
+            <div class="row rounded bg-secondary mt-2" id="{{ d['id'] }}">
+                <div class="col align-self-center">
+                    <h3>{{ d['name'] }}</h3>
+                    <img src = "{{ d['image'] }}"/>
+                    <p>{{ d['description'] }}</p>
+                    <button id="{{ d['id'] }}" onClick="addToCart(this.id)">Add To Cart</button>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
 </div>
+
+<script type="text/javascript">
+    function addToCart(id){
+        console.log(id);
+    }
+</script>
 
 {% endblock %}

@@ -25,7 +25,7 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <nav class="navbar navbar-expand-md navbar-light bg-dark">
 
         <a class="navbar-brand me-auto" href="#!">
             <a href="/">AD</a>
@@ -55,9 +55,13 @@
             <ul class="navbar-nav">
                 {%if user_data %}
                 <li class="nav-item pl-2 mb-2 mb-md-0">
-                    <a type="button" id="sign-out";
+                    <a type="button" id="sign-out" ;
                         class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light">Sign
                         out</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/profile" type="button" id="profile"
+                        class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Profile</a>
                 </li>
                 {% else %}
                 <li class="nav-item pl-2 mb-2 mb-md-0">
@@ -65,10 +69,7 @@
                         class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light">Sign
                         in</a>
                 </li>
-                <li class="nav-item">
-                    <a href="#!" type="button" id="sign-up"
-                        class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Sign up</a>
-                </li>
+
                 {% endif %}
             </ul>
 
@@ -79,6 +80,12 @@
     <!-- Navbar -->
 
     <main role="main" class="container">
+
+        {% if error_message %}
+        <div class='alert alert-danger mt-2 text-center' role='alert'>
+            <p> {{ error_message }}</p>
+        </div>
+        {% endif %}
 
         <!-- Content -->
         {% block content %}

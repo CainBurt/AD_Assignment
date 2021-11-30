@@ -18,6 +18,7 @@
 
 
 window.addEventListener('load', function () {
+
     var logout = document.getElementById("sign-out")
     if (logout) {
         logout.addEventListener('click', logOut)
@@ -25,7 +26,7 @@ window.addEventListener('load', function () {
 
     function logOut() {
         firebase.auth().signOut();
-        location.reload()
+        window.location.href = "/index"
         console.log("Sign out js")
     };
 
@@ -33,17 +34,9 @@ window.addEventListener('load', function () {
     var uiConfig = {
         signInSuccessUrl: '/',
         signInOptions: [
-            // Comment out any lines corresponding to providers you did not check in
-            // the Firebase console.
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             firebase.auth.EmailAuthProvider.PROVIDER_ID,
-            //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-            //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-            //firebase.auth.GithubAuthProvider.PROVIDER_ID,
-            //firebase.auth.PhoneAuthProvider.PROVIDER_ID
-
         ],
-        // Terms of service url.
         tosUrl: '<your-tos-url>'
     };
 
