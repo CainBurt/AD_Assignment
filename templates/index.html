@@ -13,12 +13,14 @@
 
     <div class="container">
         {% for d in data %}
-            <div class="row rounded bg-secondary mt-2" id="{{ d['id'] }}">
-                <div class="col align-self-center">
+            <div class="row rounded bg-secondary mt-2" >
+                <div class="col align-self-center" id="{{ d['id'] }}">
+                    
+                    <img src = "{{ d['image'] }}" style="width:350px;height:300px;"/>
                     <h3>{{ d['name'] }}</h3>
-                    <img src = "{{ d['image'] }}"/>
-                    <p>{{ d['description'] }}</p>
-                    <button id="{{ d['id'] }}" onClick="addToCart(this.id)">Add To Cart</button>
+                    <p>£{{ d['price'] }}</p>
+                    <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn">Add To Cart</a>
+                    <a href='/product={{d["id"]}}' class="btn">More Details</a>
                 </div>
             </div>
         {% endfor %}
@@ -28,7 +30,11 @@
 
 <script type="text/javascript">
     function addToCart(id){
-        console.log(id);
+        console.log("added product " + id + " to cart");
+    }
+
+    function moreDetails(id){
+        console.log("show more details of product: " + id);
     }
 </script>
 
