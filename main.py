@@ -126,11 +126,10 @@ def add_to_cart(id):
     return redirect('/index')
 
 
-@app.route('/removecart/<int:id>')
-def remove_from_cart(id):
-    if id in session['cart']:
-        session['cart'].remove(id)
-
+@app.route('/removecart/<int:index>')
+def remove_from_cart(index):
+    session['cart'].pop(index)
+    session.modified = True
     return redirect('/cart')
 
 
@@ -154,4 +153,5 @@ def cart():
     return render_template('cart.html', data=cart_products)
 
 
-
+if __name__ == '__main__':
+    app.run()

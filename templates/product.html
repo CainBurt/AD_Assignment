@@ -8,8 +8,16 @@
         <h3>{{ d['name'] }}</h3>
         <p>£{{ d['price'] }}</p>
         <p>{{ d['description'] }}</p>
-        <a id="cart" class="btn btn-info mb-2">Add To Cart</a>
+        <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>
     </div>
     {% endfor %}
 </div>
+
+<script type="text/javascript">
+    function addToCart(id) {
+        url = '/cart/' + id;
+        window.location = url;
+        };
+</script>
+
 {% endblock %}

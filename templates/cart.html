@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" >
+{% set count = namespace(value=0) %}
+    {% for i in data %}
+        {% for d in i %}
+            <div class="row rounded bg-secondary mt-2">
+                <div class="col align-self-center mt-2" id="{{ d['id'] }}">
+
+                    <img src = "{{ d['image'] }}" style="width:350px;height:300px;"/>
+                    <h3>{{ d['name'] }}</h3>
+                    <p>£{{ d['price'] }}</p>
+                    <a id="removefromcart" onClick="removeFromCart({{ count.value }})" class="btn btn-info mb-2">Remove From Cart</a>
+                </div>
+            </div>
+            {% set count.value = count.value + 1 %}
+        {% endfor %}
+    {% endfor %}
+</div>
+    <div>
+        <a id="placeorder" onClick="placeOrder()" class="btn btn-info mb-2 mt-2">Place Order Cart</a>
+        <a id="emptycart" onClick="clearCart()" class="btn btn-info mb-2 mt-2">Empty Cart</a>
+    </div>
+
+<script type="text/javascript">
+    function removeFromCart(index) {
+        url = '/removecart/' + index;
+        window.location = url;
+        };
+
+    function clearCart() {
+        url = '/cartclear';
+        window.location = url;
+        };
+
+    function placeOrder() {
+        console.log("order placed!")
+        };
+</script>
+
+{% endblock %}
