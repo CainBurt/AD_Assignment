@@ -1,13 +1,15 @@
 import json
 import logging
 import requests
-from flask import Flask, render_template, request, flash, make_response, jsonify
+from flask import Flask, render_template, request, flash, make_response, jsonify, session, redirect
 from google.auth.transport import requests as auth_requests
 import google.oauth2.id_token
 
 firebase_request_adapter = auth_requests.Request()
 
 app = Flask(__name__)
+
+app.secret_key = 'secret'
 
 
 @app.route('/')
@@ -41,6 +43,7 @@ def home():
     return render_template('index.html', user_data=claims,
                            data=data,
                            error_message=error_message)
+
 
 @app.route('/login')
 def login():
@@ -87,6 +90,7 @@ def profile():
         error_message = "You Need to login first!"
         return render_template('login.html', user_data=claims, error_message=error_message)
 
+
 @app.route('/product=<id>')
 def product(id):
     # Verify Firebase auth.
@@ -107,3 +111,47 @@ def product(id):
     data = json.loads(jresponse)
 
     return render_template('product.html', user_data=claims, data=data, error_message=error_message)
+
+
+@app.route('/cart/<int:id>')
+def add_to_cart(id):
+    if 'cart' not in session:
+        session['cart'] = []
+
+    session['cart'].append(id)
+    print(session)
+
+    flash("Successfully added to cart.")
+
+    return redirect('/index')
+
+
+@app.route('/removecart/<int:id>')
+def remove_from_cart(id):
+    if id in session['cart']:
+        session['cart'].remove(id)
+
+    return redirect('/cart')
+
+
+@app.route('/cartclear')
+def cartclear():
+    session['cart'] = []
+    return redirect('/index')
+
+
+@app.route('/cart')
+def cart():
+    cart_products = []
+    for n in session['cart']:
+        product_data = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + str(n)
+        mongo_product = requests.get(product_data)
+        jresponse = mongo_product.text
+        data = json.loads(jresponse)
+
+        cart_products.append(data)
+
+    return render_template('cart.html', data=cart_products)
+
+
+
