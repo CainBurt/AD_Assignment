@@ -2,45 +2,46 @@
 {% block content %}
 
 <div>
-    <div class="rounded bg-light mt-2">
-        {%if user_data %}
-        {{ user_data }}
-        <h1>Logged in as: {{ user_data['name'] }}</h1>
-        {% else %}
-        <h1>You are not logged in</h1>
-        {% endif %}
+<!--    <div class="rounded bg-light mt-2">-->
+<!--        {%if user_data %}-->
+<!--        {{ user_data }}-->
+<!--        <h1>Logged in as: {{ user_data['name'] }}</h1>-->
+<!--        {% else %}-->
+<!--        <h1>You are not logged in</h1>-->
+<!--        {% endif %}-->
 
-    </div>
-    <div class="rounded bg-light mt-2">
-        {%if session['cart'] %}
-        {{ session['cart'] }}
-        {% endif %}
-        
+<!--    </div>-->
+<!--    <div class="rounded bg-light mt-2">-->
+<!--        {%if session['cart'] %}-->
+<!--        {{ session['cart'] }}-->
+<!--        {% endif %}-->
+<!--        -->
 
-    </div>
+<!--    </div>-->
 
     <div class="container">
+        <div class="row ">
         {% for d in data %}
-        <div class="row rounded bg-secondary mt-2">
-            <div class="col align-self-center mt-2" id="{{ d['id'] }}">
 
-                <img src="{{ d['image'] }}" style="width:350px;height:300px;" />
-                <h3>{{ d['name'] }}</h3>
+            <div class="col-sm rounded bg-secondary mt-2 ml-2" id="{{ d['id'] }}">
+
+                <img src="{{ d['image'] }}" style="width:300px;height:250px;" />
+                <h4><a href='/product={{d["id"]}}'>{{ d['name'] }}</a></h4>
                 <p>£{{ d['price'] }}</p>
-                <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>
-                <a href='/product={{d["id"]}}' class="btn btn-info mb-2">More Details</a>
+<!--                <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>-->
             </div>
-        </div>
+
         {% endfor %}
+            </div>
     </div>
 
 </div>
 
-<script type="text/javascript">
-    function addToCart(id) {
-        url = '/cart/' + id;
-        window.location = url;
-        };
-</script>
+<!--<script type="text/javascript">-->
+<!--    function addToCart(id) {-->
+<!--        url = '/cart/' + id;-->
+<!--        window.location = url;-->
+<!--        };-->
+<!--</script>-->
 
 {% endblock %}

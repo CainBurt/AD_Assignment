@@ -141,16 +141,49 @@ def cartclear():
 
 @app.route('/cart')
 def cart():
-    cart_products = []
-    for n in session['cart']:
-        product_data = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + str(n)
-        mongo_product = requests.get(product_data)
+    id_token = request.cookies.get("token")
+    claims = None
+
+    # if user is logged in, sends the user data to html page so navbar can change
+    if id_token:
+        claims = google.oauth2.id_token.verify_firebase_token(
+            id_token, firebase_request_adapter)
+
+    # if cart is empty, redirects to index page
+    if session['cart']:
+        cart_products = []
+        for n in session['cart']:
+            product_data = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + str(n)
+            mongo_product = requests.get(product_data)
+            jresponse = mongo_product.text
+            data = json.loads(jresponse)
+
+            cart_products.append(data)
+
+        return render_template('cart.html', data=cart_products, user_data=claims)
+    else:
+        return redirect('/index')
+
+
+@app.route('/order', methods=['GET'])
+def order():
+    id_token = request.cookies.get("token")
+    claims = None
+
+    if id_token:
+        claims = google.oauth2.id_token.verify_firebase_token(
+            id_token, firebase_request_adapter)
+
+    #send cart data to order page
+    product_order = []
+    for product_id in session['cart']:
+        product = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + str(product_id)
+        mongo_product = requests.get(product)
         jresponse = mongo_product.text
         data = json.loads(jresponse)
+        product_order.append(data)
 
-        cart_products.append(data)
-
-    return render_template('cart.html', data=cart_products)
+    return render_template('order.html', data=product_order, user_data=claims)
 
 
 if __name__ == '__main__':
