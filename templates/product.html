@@ -2,13 +2,16 @@
 {% block content %}
 <div class="row rounded bg-secondary mt-2" >
     {% for d in data %}
-    <div class="col align-self-center mt-2" id="{{ d['id'] }}">
-                    
-        <img src = "{{ d['image'] }}" style="width:350px;height:300px;"/>
-        <h3>{{ d['name'] }}</h3>
-        <p>£{{ d['price'] }}</p>
-        <p>{{ d['description'] }}</p>
-        <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>
+    <div class="row align-self-center mt-2 mb-2" >
+        <div class="col-4">
+            <img src = "{{ d['image'] }}" class="img-thumbnail"/>
+        </div>
+        <div class="col-8" id="{{ d['id'] }}">
+            <h3>{{ d['name'] }}</h3>
+            <p>£{{ d['price'] }}</p>
+            <p>{{ d['description'] }}</p>
+            <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>
+        </div>
     </div>
     {% endfor %}
 </div>

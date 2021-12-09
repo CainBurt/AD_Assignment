@@ -1,38 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-
+<style>
+    .gap{
+        width: 2px;
+    }
+    a:link, a:visited {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+</style>
 <div>
-<!--    <div class="rounded bg-light mt-2">-->
-<!--        {%if user_data %}-->
-<!--        {{ user_data }}-->
-<!--        <h1>Logged in as: {{ user_data['name'] }}</h1>-->
-<!--        {% else %}-->
-<!--        <h1>You are not logged in</h1>-->
-<!--        {% endif %}-->
-
-<!--    </div>-->
-<!--    <div class="rounded bg-light mt-2">-->
-<!--        {%if session['cart'] %}-->
-<!--        {{ session['cart'] }}-->
-<!--        {% endif %}-->
-<!--        -->
-
-<!--    </div>-->
-
     <div class="container">
-        <div class="row ">
-        {% for d in data %}
+        {% for product_row in data | batch(4, '&nbsp;') %}
+        <div class="row mt-2">
+            {% for d in product_row %}
+                <div class="mr-2 col rounded bg-secondary " id="{{ d['id'] }}">
 
-            <div class="col-sm rounded bg-secondary mt-2 ml-2" id="{{ d['id'] }}">
+                    <img src="{{ d['image'] }}"  class="img-thumbnail mt-2"/>
+                    <h4><a href='/product={{d["id"]}}' class="link-info">{{ d['name'] }}</a></h4>
+                    <p>£{{ d['price'] }}</p>
+                </div>
+                <p class="gap"></p>
 
-                <img src="{{ d['image'] }}" style="width:300px;height:250px;" />
-                <h4><a href='/product={{d["id"]}}'>{{ d['name'] }}</a></h4>
-                <p>£{{ d['price'] }}</p>
-<!--                <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>-->
+            {% endfor %}
             </div>
-
         {% endfor %}
-            </div>
     </div>
 
 </div>

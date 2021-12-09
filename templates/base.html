@@ -18,6 +18,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
+    <link rel="icon" href="https://cdn.discordapp.com/attachments/322767339772837888/918261654007975936/AD_Logo-psd.png">
     <style src="{{ url_for('static', filename='style.css') }}"></style>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <title>AD Assignment</title>
@@ -29,7 +30,7 @@
     <nav class="navbar navbar-expand-md navbar-light bg-dark">
 
         <a class="navbar-brand ml-5" href="#!">
-            <a href="/">AD</a>
+            <a href="/"><img src="https://cdn.discordapp.com/attachments/322767339772837888/918261654007975936/AD_Logo-psd.png" style="width:40px;height:40px;"></a>
         </a>
 
         <!-- Links -->
@@ -49,8 +50,8 @@
 
             <form class="navbar-search" action="">
 
-                <div class="input-group-prepend mr-5">
-                    <input class="form-control white-text rgba-black-light border-0 z-depth-0 pl-5" type="text"
+                <div class="input-group-prepend">
+                    <input class="form-control white-text rgba-black-light border-0 z-depth-0" type="text"
                         placeholder="Search" aria-label="Search">
                 </div>
 
@@ -59,9 +60,9 @@
             <!-- Right -->
             <ul class="navbar-nav">
                 {%if user_data %}
-                <li class="nav-item pl-2 mb-2 mb-md-0 mr-5">
+                <li class="nav-item">
                     <a type="button" id="sign-out" ;
-                        class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light">Sign
+                        class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light" >Sign
                         out</a>
                 </li>
                 <li class="nav-item">
@@ -69,7 +70,7 @@
                         class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Profile</a>
                 </li>
                 {% else %}
-                <li class="nav-item pl-2 mb-2 mb-md-0 mr-5">
+                <li class="nav-item ">
                     <a href="/login" type="button" id="sign-in"
                         class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light">Sign
                         in</a>
@@ -116,13 +117,13 @@
         // Your web app's Firebase configuration
         // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         var firebaseConfig = {
-            apiKey: "AIzaSyA7Qp9kQZNfqaCpxb3VWZBPAEfSLjOvCdk",
-            authDomain: "ad-cain.firebaseapp.com",
-            projectId: "ad-cain",
-            storageBucket: "ad-cain.appspot.com",
-            messagingSenderId: "387488210170",
-            appId: "1:387488210170:web:ec7fbc974292d86641bd43",
-            measurementId: "G-MNMGYJ686X"
+            apiKey: "AIzaSyCP_l8j-Nq_aWsCkYEaQcwOmf01yRldQPE",
+            authDomain: "ad-cainburt.firebaseapp.com",
+            projectId: "ad-cainburt",
+            storageBucket: "ad-cainburt.appspot.com",
+            messagingSenderId: "154525907240",
+            appId: "1:154525907240:web:3016919f272ecc6fc4781d",
+            measurementId: "${config.measurementId}"
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);

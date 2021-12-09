@@ -35,7 +35,7 @@ def home():
             # verification checks fail.
             error_message = str(exc)
 
-    url = "https://europe-west2-ad-cain.cloudfunctions.net/dispaly_products_mongoDB"
+    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_products_mongoDB"
     mongo_products = requests.get(url)
     jresponse = mongo_products.text
     data = json.loads(jresponse)
@@ -105,7 +105,7 @@ def product(id):
         except ValueError as exc:
             error_message = str(exc)
 
-    url = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + id
+    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + id
     mongo_product = requests.get(url)
     jresponse = mongo_product.text
     data = json.loads(jresponse)
@@ -153,7 +153,7 @@ def cart():
     if session['cart']:
         cart_products = []
         for n in session['cart']:
-            product_data = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + str(n)
+            product_data = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(n)
             mongo_product = requests.get(product_data)
             jresponse = mongo_product.text
             data = json.loads(jresponse)
@@ -174,16 +174,19 @@ def order():
         claims = google.oauth2.id_token.verify_firebase_token(
             id_token, firebase_request_adapter)
 
-    #send cart data to order page
-    product_order = []
-    for product_id in session['cart']:
-        product = "https://europe-west2-ad-cain.cloudfunctions.net/single_product?id=" + str(product_id)
-        mongo_product = requests.get(product)
-        jresponse = mongo_product.text
-        data = json.loads(jresponse)
-        product_order.append(data)
+    # send cart data to order page
+    if claims is not None:
+        product_order = []
+        for product_id in session['cart']:
+            product = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(product_id)
+            mongo_product = requests.get(product)
+            jresponse = mongo_product.text
+            data = json.loads(jresponse)
+            product_order.append(data)
 
-    return render_template('order.html', data=product_order, user_data=claims)
+        return render_template('order.html', data=product_order, user_data=claims)
+    else:
+        return redirect('/login')
 
 
 if __name__ == '__main__':

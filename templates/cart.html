@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container" >
+<style>
+    .col-1{
+        padding-right: 64px;
+    }
+</style>
+<div class="container-fluid" >
 {% set count = namespace(value=0) %}
     {% for i in data %}
         {% for d in i %}
-            <div class="row rounded bg-secondary mt-2">
-                <div class="col align-self-center mt-2" id="{{ d['id'] }}">
-
-                    <img src = "{{ d['image'] }}" style="width:350px;height:300px;"/>
+            <div class="row rounded bg-secondary mt-2" id="{{ d['id'] }}">
+                <div class="col-2">
+                    <img src = "{{ d['image'] }}" style="width:125px;height:125px;" class="mt-2 mb-2"/>
+                </div>
+                <div class="col-10">
                     <h3>{{ d['name'] }}</h3>
                     <p>£{{ d['price'] }}</p>
                     <a id="removefromcart" onClick="removeFromCart({{ count.value }})" class="btn btn-info mb-2">Remove From Cart</a>
