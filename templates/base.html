@@ -60,6 +60,12 @@
             <!-- Right -->
             <ul class="navbar-nav">
                 {%if user_data %}
+                    {% if user_data['email'] == "cain.m.burt@gmail.com" %}
+                        <li class="nav-item">
+                        <a href="/newproduct" type="button" id="new-product" ;
+                            class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light" >New Product</a>
+                        </li>
+                    {% endif %}
                 <li class="nav-item">
                     <a type="button" id="sign-out" ;
                         class="btn btn-outline-primary btn-md btn-rounded btn-navbar waves-effect waves-light" >Sign
@@ -69,6 +75,7 @@
                     <a href="/profile" type="button" id="profile"
                         class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Profile</a>
                 </li>
+
                 {% else %}
                 <li class="nav-item ">
                     <a href="/login" type="button" id="sign-in"

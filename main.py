@@ -53,14 +53,9 @@ def login():
     claims = None
 
     if id_token:
-        try:
-            # Verify the token against the Firebase Auth API. This example verifies the token on each page load.
-            claims = google.oauth2.id_token.verify_firebase_token(
-                id_token, firebase_request_adapter)
-
-        except ValueError as exc:
-            # This will be raised if the token is expired or any other verification checks fail.
-            error_message = str(exc)
+        # Verify the token against the Firebase Auth API. This example verifies the token on each page load.
+        claims = google.oauth2.id_token.verify_firebase_token(
+            id_token, firebase_request_adapter)
 
         error_message = "You are already logged in!"
         return render_template('index.html', user_data=claims, error_message=error_message)
@@ -153,7 +148,8 @@ def cart():
     if session['cart']:
         cart_products = []
         for n in session['cart']:
-            product_data = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(n)
+            product_data = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(
+                n)
             mongo_product = requests.get(product_data)
             jresponse = mongo_product.text
             data = json.loads(jresponse)
@@ -178,7 +174,8 @@ def order():
     if claims is not None:
         product_order = []
         for product_id in session['cart']:
-            product = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(product_id)
+            product = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(
+                product_id)
             mongo_product = requests.get(product)
             jresponse = mongo_product.text
             data = json.loads(jresponse)
@@ -187,6 +184,44 @@ def order():
         return render_template('order.html', data=product_order, user_data=claims)
     else:
         return redirect('/login')
+
+
+# handles the new product data and sends to the cloud function to add to the database
+@app.route('/newproduct', methods=['GET', 'POST'])
+def new_product_form():
+    id_token = request.cookies.get("token")
+    claims = None
+    if id_token:
+        claims = google.oauth2.id_token.verify_firebase_token(
+            id_token, firebase_request_adapter)
+
+    # checks if user is ADMIN
+    if claims and claims['email'] == 'cain.m.burt@gmail.com':
+        if request.method == "POST":
+            form = request.form
+            missing = list()
+
+            # checks empty inputs
+            for k, v in form.items():
+                if v == "":
+                    missing.append(k)
+
+            if missing:
+                feedback = f"Missing fields for {', '.join(missing)}"
+                return render_template("/newproduct.html", userdata=claims, feedback=feedback)
+            else:
+                name = request.form['name']
+                desc = request.form['description']
+                image = request.form['image']
+                price = request.form['price']
+
+                url = "https://europe-west2-ad-cainburt.cloudfunctions.net/store_product_mongoDB?name=" + name + "&desc=" + desc + "&img=" + image + "&price=" + price
+                response = requests.get(url)
+                feedback = response.content
+            return render_template("/newproduct.html", userdata=claims, feedback=feedback)
+        return render_template('/newproduct.html', user_data=claims)
+    else:
+        return render_template('/index.html', error_message="You are not a ADMIN!", user_data=claims)
 
 
 if __name__ == '__main__':

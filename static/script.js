@@ -40,8 +40,6 @@ window.addEventListener('load', function () {
         tosUrl: '<your-tos-url>'
     };
 
-
-
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
 
