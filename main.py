@@ -224,5 +224,22 @@ def new_product_form():
         return render_template('/index.html', error_message="You are not a ADMIN!", user_data=claims)
 
 
+@app.route('/deleteproduct/<int:id>')
+def delete_product(id):
+    id_token = request.cookies.get("token")
+    claims = None
+    if id_token:
+        claims = google.oauth2.id_token.verify_firebase_token(
+            id_token, firebase_request_adapter)
+
+    if claims and claims['email'] == 'cain.m.burt@gmail.com':
+        url = "https://europe-west2-ad-cainburt.cloudfunctions.net/delete_product_mongoDB?id=" + str(id)
+        response = requests.get(url)
+        feedback = response.content
+        return render_template("/index.html", userdata=claims, error_message=feedback)
+    else:
+        return render_template('/index.html', error_message="You are not a ADMIN!", user_data=claims)
+
+
 if __name__ == '__main__':
     app.run()

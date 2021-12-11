@@ -11,6 +11,9 @@
             <p>£{{ d['price'] }}</p>
             <p>{{ d['description'] }}</p>
             <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>
+            {% if user_data['email'] == "cain.m.burt@gmail.com" %}
+                <a id="deleteproduct" onClick="deleteProduct(this.parentNode.id)" class="btn btn-info mb-2">Delete Product</a>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
@@ -19,6 +22,11 @@
 <script type="text/javascript">
     function addToCart(id) {
         url = '/cart/' + id;
+        window.location = url;
+        };
+
+    function deleteProduct(id) {
+        url = '/deleteproduct/' + id;
         window.location = url;
         };
 </script>
