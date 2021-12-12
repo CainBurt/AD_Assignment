@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if feedback %}
+    <p class="text-danger float-right">{{ feedback }}</p>
+    {% endif %}
+
+    {{ data }}
+
+    <h2> Edit Product Form </h2>
+    {% for d in data %}
+    <form action="/editproduct/{{ d['id'] }}" method="POST">
+
+
+        <label>Product Name</label>
+        <input type="text" id="name" name="name" value="{{ d['name'] }}"><br>
+
+        <label>Product Description</label>
+        <textarea type="textarea" id="description" name="description">{{ d['description'] }}</textarea><br>
+
+        <label>Product Image (URL)</label>
+        <input type="text" id="image" name="image" value="{{ d['image'] }}"><br>
+
+        <label>Product Price (£)</label>
+        <input type="number" id="price" name="price" value="{{ d['price'] }}"><br>
+        <input type="submit" value="submit">
+    {% endfor %}
+    </form>
+
+{% endblock %}

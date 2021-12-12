@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+
+    {% if feedback %}
+    <p class="text-danger float-right">{{ feedback }}</p>
+    {% endif %}
+
 <div class="row rounded bg-secondary mt-2" >
     {% for d in data %}
     <div class="row align-self-center mt-2 mb-2" >
@@ -12,7 +17,8 @@
             <p>{{ d['description'] }}</p>
             <a id="cart" onClick="addToCart(this.parentNode.id)" class="btn btn-info mb-2">Add To Cart</a>
             {% if user_data['email'] == "cain.m.burt@gmail.com" %}
-                <a id="deleteproduct" onClick="deleteProduct(this.parentNode.id)" class="btn btn-info mb-2">Delete Product</a>
+                <a id="editproduct" onClick="editProduct(this.parentNode.id)" class="btn btn-info mb-2">Edit Product</a>
+                <a id="deleteproduct" onClick="deleteProduct(this.parentNode.id)" class="btn btn-warning mb-2">Delete Product</a>
             {% endif %}
         </div>
     </div>
@@ -27,6 +33,11 @@
 
     function deleteProduct(id) {
         url = '/deleteproduct/' + id;
+        window.location = url;
+        };
+
+    function editProduct(id) {
+        url = '/editproduct/' + id;
         window.location = url;
         };
 </script>

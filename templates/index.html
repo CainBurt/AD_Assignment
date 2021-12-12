@@ -19,7 +19,7 @@
                 <div class="mr-2 col rounded bg-secondary " id="{{ d['id'] }}">
 
                     <img src="{{ d['image'] }}"  class="img-thumbnail mt-2"/>
-                    <h4><a href='/product={{d["id"]}}' class="link-info">{{ d['name'] }}</a></h4>
+                    <h4><a href='/product/{{d["id"]}}' class="link-info">{{ d['name'] }}</a></h4>
                     <p>£{{ d['price'] }}</p>
                 </div>
                 <p class="gap"></p>
@@ -30,12 +30,5 @@
     </div>
 
 </div>
-
-<!--<script type="text/javascript">-->
-<!--    function addToCart(id) {-->
-<!--        url = '/cart/' + id;-->
-<!--        window.location = url;-->
-<!--        };-->
-<!--</script>-->
 
 {% endblock %}
