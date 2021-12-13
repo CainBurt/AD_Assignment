@@ -2,13 +2,16 @@ from firebase_admin import credentials, firestore, initialize_app
 
 def store_order(request):
 
-  # Initialize Firestore DB
-  cred = credentials.ApplicationDefault()
-  default_app = initialize_app(cred)
-  db = firestore.client()
-  user_ref = db.collection('user')
+  
   
   try:
+    # Initialize Firestore DB
+    cred = credentials.ApplicationDefault()
+    default_app = initialize_app(cred)
+    db = firestore.client()
+
+    #get order details
+    user_ref = db.collection('user')
     user_id = request.args.get('uid')
     user_name = request.args.get('name')
     user_email = request.args.get('email')
@@ -24,4 +27,4 @@ def store_order(request):
 
     return f"success"
   except Exception as e:
-      return f"An Error Occurred: {e}"
+    return f"An Error Occurred: {e}"
