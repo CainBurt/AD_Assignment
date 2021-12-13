@@ -2,6 +2,7 @@ import json
 import logging
 import requests
 from flask import Flask, render_template, request, flash, make_response, jsonify, session, redirect
+from firebase_admin import credentials, firestore, initialize_app
 from google.auth.transport import requests as auth_requests
 import google.oauth2.id_token
 
@@ -10,6 +11,12 @@ firebase_request_adapter = auth_requests.Request()
 app = Flask(__name__)
 
 app.secret_key = 'secret'
+
+# Initialize Firestore DB
+cred = credentials.Certificate("C:/Users/Cain/Downloads/ad-cainburt-firebase-adminsdk-8g783-d131354892.json")
+default_app = initialize_app(cred)
+db = firestore.client()
+user_ref = db.collection('user')
 
 
 # checks if a user is logged in:
@@ -111,9 +118,9 @@ def cart():
         return redirect('/index')
 
 
-@app.route('/order', methods=['GET'])
+@app.route('/order', methods=['GET', 'POST'])
 def order():
-    # send cart data to order page
+    # send cart data to order page if logged in
     if check_user()[0] is not None:
         product_order = []
         for product_id in session['cart']:
@@ -123,6 +130,27 @@ def order():
             jresponse = mongo_product.text
             data = json.loads(jresponse)
             product_order.append(data)
+
+            if request.method == "POST":
+                try:
+                    user_name = request.form['firstname']
+                    user_email = request.form['email']
+                    user_address = request.form['address']
+                    user_city = request.form['city']
+                    user_county = request.form['county']
+                    user_postcode = request.form['zip']
+
+                    user_cart = request.form['cart']
+
+                    print(user_cart)
+
+                    print(check_user()[0]['user_id'])
+                    user_id = check_user()[0]['user_id']
+                    user_order = {'name': user_name, 'email': user_email, 'address':user_address, 'city': user_city, 'county':user_county, 'postcode':user_postcode, 'products_id': user_cart}
+                    user_ref.document(user_id).collection('orders').add(user_order)
+                    return jsonify({"success": True}), 200
+                except Exception as e:
+                    return f"An Error Occurred: {e}"
 
         return render_template('order.html', data=product_order, user_data=check_user()[0])
     else:
@@ -194,7 +222,8 @@ def edit_product(id):
                 image = request.form['image']
                 price = request.form['price']
 
-                url = "https://europe-west2-ad-cainburt.cloudfunctions.net/edit_product_mongoDB?id=" + str(id) + "&name=" + name + "&desc=" + desc + "&img=" + image + "&price=" + str(price)
+                url = "https://europe-west2-ad-cainburt.cloudfunctions.net/edit_product_mongoDB?id=" + str(
+                    id) + "&name=" + name + "&desc=" + desc + "&img=" + image + "&price=" + str(price)
                 response = requests.get(url)
                 feedback = response.content
                 print(id, name, desc, image, price)
