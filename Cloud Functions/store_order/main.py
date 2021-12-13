@@ -1,14 +1,10 @@
-from firebase_admin import credentials, firestore, initialize_app
+from google.cloud import firestore
 
 def store_order(request):
 
-  
-  
   try:
     # Initialize Firestore DB
-    cred = credentials.ApplicationDefault()
-    default_app = initialize_app(cred)
-    db = firestore.client()
+    db = firestore.Client()
 
     #get order details
     user_ref = db.collection('user')

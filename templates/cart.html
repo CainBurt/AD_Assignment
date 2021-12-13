@@ -16,7 +16,7 @@
                 <div class="col-10">
                     <h3>{{ d['name'] }}</h3>
                     <p>£{{ d['price'] }}</p>
-                    <a id="removefromcart" onClick="removeFromCart({{ count.value }})" class="btn btn-info mb-2">Remove From Cart</a>
+                    <a id="removefromcart" onClick="removeFromCart({{ count.value }})" class="btn btn-warning mb-2">Remove From Cart</a>
                 </div>
             </div>
             {% set count.value = count.value + 1 %}
@@ -42,6 +42,7 @@
     function placeOrder() {
         console.log("order placed!")
         };
+
 </script>
 
 {% endblock %}

@@ -1,15 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
+    <style>
+
+    a:link, a:visited {
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    </style>
 
     {% if feedback %}
     <p class="text-danger float-right">{{ feedback }}</p>
     {% endif %}
 
-<div>
-    <a href='#' id="orders" onClick="" class="btn btn-info mb-2">Your Orders</a>
-    <a href='/addresses' id="address" onClick="" class="btn btn-info mb-2">Your Addresses</a>
-    <a href='#' id="payment" onClick="" class="btn btn-info mb-2">Your Payments</a>
-</div>
+    {% for order in orders %}
+        <div class="container rounded bg-secondary mt-2" id="{{ order['oid'] }}">
+            <p>Tracking Number: {{ order['oid'] }}</p>
+            {% for product in order['order']['products_id'] %}
 
-    {{ user_data }}
+                {% for k in productlist %}
+                     {% if product|int == k['id'] %}
+                         <p>Product: <a href="/product/{{ k['id'] }}" class="link-info">{{ k['name'] }}</a></p>
+                     {% endif %}
+                {% endfor %}
+            {% endfor %}
+            <P>Details: {{ order['order']['name'] }}, {{ order['order']['email'] }}</P>
+            <P>Address: {{ order['order']['address'] }}, {{ order['order']['city'] }}, {{ order['order']['county'] }}, {{ order['order']['postcode'] }}</P>
+            <a id="editorder" onClick="editOrder(this.parentNode.id)" class="btn btn-warning mb-2">Edit Order Details</a>
+            <a id="deleteorder" onClick="deleteOrder(this.parentNode.id)" class="btn btn-warning mb-2">Cancel Order</a>
+        </div>
+
+    {% endfor %}
+    {{ idd }}
+    <script type="text/javascript">
+    function deleteOrder(id) {
+        console.log("Delete Order: " + id)
+        {#url = '/cart/' + id;#}
+        {#window.location = url;#}
+        };
+
+    function editOrder(id) {
+        console.log("Delete Order: " + id)
+        {#url = '/cart/' + id;#}
+        {#window.location = url;#}
+        };
+    </script>
+
+
 {% endblock %}

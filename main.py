@@ -2,6 +2,7 @@ import json
 import logging
 import requests
 from flask import Flask, render_template, request, flash, make_response, jsonify, session, redirect
+from firebase_admin import credentials, firestore, initialize_app
 from google.auth.transport import requests as auth_requests
 import google.oauth2.id_token
 
@@ -10,6 +11,13 @@ firebase_request_adapter = auth_requests.Request()
 app = Flask(__name__)
 
 app.secret_key = 'secret'
+
+# Initialize Firestore DB
+# cred = credentials.Certificate("C:/Users/Cain/Downloads/ad-cainburt-firebase-adminsdk-8g783-d131354892.json")
+# default_app = initialize_app(cred)
+# db = firestore.client()
+# user_ref = db.collection('user')
+
 
 # checks if a user is logged in:
 def check_user():
@@ -46,10 +54,44 @@ def login():
         return render_template('login.html', user_data=check_user()[0])
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET'])
 def profile():
-    if check_user():
-        return render_template('profile.html', user_data=check_user()[0])
+    if check_user()[0]:
+
+        user_id = check_user()[0]['user_id']
+        product_list = []
+
+        fbase_url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_orders_firestore?uid=" + user_id
+        firebase_product = requests.get(fbase_url)
+        firebase_order = firebase_product.text
+        fbase_data = json.loads(firebase_order)
+
+        # get the product info for the ids
+        for i in fbase_data:
+            for k, v in list(i['order'].items()):
+                if k == "products_id":
+                    v = json.loads(v)
+                    for i in v:
+                        url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(
+                            i)
+                        mongo_product = requests.get(url)
+                        jresponse = mongo_product.text
+                        data = json.loads(jresponse)
+
+                        # filters the ids and names and adds them to a list to return to html
+                        for p in data:
+                            prods = {'id': p['id'], 'name': p['name']}
+                            product_list.append(prods)
+
+        # removes duplicates
+        result = []
+        for i in range(len(product_list)):
+            if product_list[i] not in product_list[i+1:]:
+                result.append(product_list[i])
+
+        print(result)
+
+        return render_template('profile.html', user_data=check_user()[0], orders=fbase_data, productlist=result)
     else:
         error_message = "You Need to login first!"
         return render_template('login.html', user_data=check_user()[0], error_message=error_message)
@@ -124,7 +166,6 @@ def order():
             product_order.append(data)
 
             if request.method == "POST":
-
                 user_name = request.form['firstname']
                 user_email = request.form['email']
                 user_address = request.form['address']
@@ -138,7 +179,8 @@ def order():
 
                 url = "https://europe-west2-ad-cainburt.cloudfunctions.net/store_orders_firestore?uid=" + user_id + "&name=" + user_name + "&email=" + user_email + "&address=" + user_address + "&city=" + user_city + "&county=" + user_county + "&zip=" + user_postcode + "&cart=" + user_cart
                 feedback = requests.get(url)
-                return render_template('profile.html', feedback=feedback, user_data=check_user()[0])
+                session.pop('cart')
+                return redirect('/profile')
 
         return render_template('order.html', data=product_order, user_data=check_user()[0])
     else:
