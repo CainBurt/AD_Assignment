@@ -36,8 +36,8 @@
     <script type="text/javascript">
     function deleteOrder(id) {
         console.log("Delete Order: " + id)
-        {#url = '/cart/' + id;#}
-        {#window.location = url;#}
+        url = '/deleteorder/' + id;
+        window.location = url;
         };
 
     function editOrder(id) {

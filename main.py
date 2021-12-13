@@ -230,6 +230,17 @@ def delete_product(id):
         return render_template('/index.html', error_message="You are not a ADMIN!", user_data=check_user()[0])
 
 
+@app.route('/deleteorder/<oid>')
+def delete_order(oid):
+    user_id = check_user()[0]['user_id']
+    order_id = oid
+    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/delete_order_firebase?uid=" + user_id + "&oid=" + order_id
+    response = requests.get(url)
+    feedback = response.content
+
+    return render_template('/profile.html', user_data=check_user()[0], feedback=feedback)
+
+
 @app.route('/editproduct/<int:id>', methods=['GET', 'POST'])
 def edit_product(id):
     # checks user is admin
