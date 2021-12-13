@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+    {% if feedback %}
+    <p class="text-danger float-right">{{ feedback }}</p>
+    {% endif %}
+
 <div>
     <a href='#' id="orders" onClick="" class="btn btn-info mb-2">Your Orders</a>
     <a href='/addresses' id="address" onClick="" class="btn btn-info mb-2">Your Addresses</a>
