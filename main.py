@@ -280,5 +280,45 @@ def edit_product(id):
         return render_template('/index.html', error_message="You are not a ADMIN!", user_data=check_user()[0])
 
 
+@app.route('/editorderdetails/<oid>')
+def edit_order_details(oid):
+    user_id = check_user()[0]['user_id']
+    order_id = oid
+    order_list = []
+    product_list = []
+    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_one_order_firestore?uid=" + user_id + "&oid=" + order_id
+    product = requests.get(url)
+    firebase_order = product.text
+    fbase_data = json.loads(firebase_order)
+    order_list.append({'oid': order_id, 'order': fbase_data})
+    print(order_list)
+    # get the product info for the ids
+    for i in order_list:
+        for k, v in list(i['order'].items()):
+            if k == "products_id":
+                v = json.loads(v)
+                for i in v:
+                    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(
+                        i)
+                    mongo_product = requests.get(url)
+                    jresponse = mongo_product.text
+                    data = json.loads(jresponse)
+
+                    # filters the ids and names and adds them to a list to return to html
+                    for p in data:
+                        prods = {'id': p['id'], 'name': p['name']}
+                        product_list.append(prods)
+
+    # removes duplicates
+    result = []
+    for i in range(len(product_list)):
+        if product_list[i] not in product_list[i + 1:]:
+            result.append(product_list[i])
+
+    if request.method == "POST":
+        return "Post data to database"
+
+    return render_template('editorder.html', user_data=check_user()[0], orders=order_list, productlist=result)
+
 if __name__ == '__main__':
     app.run()
