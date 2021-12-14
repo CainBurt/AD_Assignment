@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<style>
-    .col-1{
-        padding-right: 64px;
-    }
-</style>
+<!-- cart -->
 <div class="container-fluid" >
 {% set count = namespace(value=0) %}
     {% for i in data %}
@@ -23,6 +19,7 @@
         {% endfor %}
     {% endfor %}
 </div>
+    <!-- buttons at the bottom of cart page -->
     <div>
         <a href="/order" id="placeorder" class="btn btn-info mb-2 mt-2">Continue to Checkout</a>
         <a id="emptycart" onClick="clearCart()" class="btn btn-info mb-2 mt-2">Empty Cart</a>

@@ -14,6 +14,7 @@
     <p class="text-danger float-right">{{ feedback }}</p>
     {% endif %}
 
+    <!-- Displays order on profile page -->
     {% for order in orders %}
         <div class="container rounded bg-secondary mt-2" id="{{ order['oid'] }}">
             <p>Tracking Number: {{ order['oid'] }}</p>

@@ -1,8 +1,6 @@
 import json
-import logging
 import requests
-from flask import Flask, render_template, request, flash, make_response, jsonify, session, redirect
-from firebase_admin import credentials, firestore, initialize_app
+from flask import Flask, render_template, request, flash, session, redirect
 from google.auth.transport import requests as auth_requests
 import google.oauth2.id_token
 
@@ -10,14 +8,7 @@ firebase_request_adapter = auth_requests.Request()
 
 app = Flask(__name__)
 
-app.secret_key = 'secret'
-
-
-# Initialize Firestore DB
-# cred = credentials.Certificate("C:/Users/Cain/Downloads/ad-cainburt-firebase-adminsdk-8g783-d131354892.json")
-# default_app = initialize_app(cred)
-# db = firestore.client()
-# user_ref = db.collection('user')
+app.secret_key = 'wdasfvhtbrnhjyjjikg'
 
 
 # checks if a user is logged in:
@@ -38,6 +29,7 @@ def check_user():
 @app.route('/')
 @app.route('/index')
 def home():
+    # displays all of the products on the home page
     url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_products_mongoDB"
     mongo_products = requests.get(url)
     jresponse = mongo_products.text
@@ -48,6 +40,7 @@ def home():
 
 @app.route('/login')
 def login():
+    # shows the login page if not logged in
     if check_user()[0]:
         error_message = "You are already logged in!"
         return render_template('index.html', user_data=check_user()[0], error_message=error_message)
@@ -57,6 +50,7 @@ def login():
 
 @app.route('/profile', methods=['GET'])
 def profile():
+    # gets all the orders for the user that is logged in.
     if check_user()[0]:
 
         user_id = check_user()[0]['user_id']
@@ -67,7 +61,7 @@ def profile():
         firebase_order = firebase_product.text
         fbase_data = json.loads(firebase_order)
 
-        # get the product info for the ids
+        # get the product info from mongoDB for the ids in the order in firestore
         for i in fbase_data:
             for k, v in list(i['order'].items()):
                 if k == "products_id":
@@ -84,13 +78,11 @@ def profile():
                             prods = {'id': p['id'], 'name': p['name']}
                             product_list.append(prods)
 
-        # removes duplicates
+        # removes the duplicates from the list of ids and names of products.
         result = []
         for i in range(len(product_list)):
             if product_list[i] not in product_list[i + 1:]:
                 result.append(product_list[i])
-
-        print(result)
 
         return render_template('profile.html', user_data=check_user()[0], orders=fbase_data, productlist=result)
     else:
@@ -100,6 +92,7 @@ def profile():
 
 @app.route('/product/<int:id>')
 def product(id):
+    # gets all the info of a product from the id
     url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(id)
     mongo_product = requests.get(url)
     jresponse = mongo_product.text
@@ -110,6 +103,7 @@ def product(id):
 
 @app.route('/cart/<int:id>')
 def add_to_cart(id):
+    # creates a cart session if there isnt one and adds the product ids to it
     if 'cart' not in session:
         session['cart'] = []
 
@@ -136,7 +130,7 @@ def cartclear():
 
 @app.route('/cart')
 def cart():
-    # if cart is empty, redirects to index page
+    # if cart is empty, redirects to index page if not gets all the data for the products in the cart
     if session['cart']:
         cart_products = []
         for n in session['cart']:
@@ -155,7 +149,7 @@ def cart():
 
 @app.route('/order', methods=['GET', 'POST'])
 def order():
-    # send cart data to order page if logged in
+    # send cart data to order page if logged in and uses the cloud function to get the name and price based on the ids in the cart
     if check_user()[0] is not None:
         product_order = []
         for product_id in session['cart']:
@@ -166,6 +160,7 @@ def order():
             data = json.loads(jresponse)
             product_order.append(data)
 
+            # send the submitted form data to the cloud function that stores the order in firestore
             if request.method == "POST":
                 user_name = request.form['firstname']
                 user_email = request.form['email']
@@ -179,7 +174,7 @@ def order():
                 user_id = check_user()[0]['user_id']
 
                 url = "https://europe-west2-ad-cainburt.cloudfunctions.net/store_orders_firestore?uid=" + user_id + "&name=" + user_name + "&email=" + user_email + "&address=" + user_address + "&city=" + user_city + "&county=" + user_county + "&zip=" + user_postcode + "&cart=" + user_cart
-                feedback = requests.get(url)
+                requests.get(url)
                 session.pop('cart')
                 return redirect('/profile')
 
@@ -197,7 +192,7 @@ def new_product_form():
             form = request.form
             missing = list()
 
-            # checks empty inputs
+            # checks empty inputs - if they are returns with an error, if not it sends the data to the cloud func to store the product.
             for k, v in form.items():
                 if v == "":
                     missing.append(k)
@@ -222,6 +217,7 @@ def new_product_form():
 
 @app.route('/deleteproduct/<id>')
 def delete_product(id):
+    # checks user is admin as only they can delete a product
     if check_user()[0] and check_user()[0]['email'] == 'cain.m.burt@gmail.com':
         url = "https://europe-west2-ad-cainburt.cloudfunctions.net/delete_product_mongoDB?id=" + str(id)
         response = requests.get(url)
@@ -233,7 +229,7 @@ def delete_product(id):
 
 @app.route('/deleteorder/<oid>')
 def delete_order(oid):
-    print(check_user()[0])
+    # checks user is logged in as they can only delete their own orders.
     if check_user()[0]:
         user_id = check_user()[0]['user_id']
 
@@ -248,7 +244,7 @@ def delete_order(oid):
 
 @app.route('/editproduct/<int:id>', methods=['GET', 'POST'])
 def edit_product(id):
-    # checks user is admin
+    # checks user is admin as only they can edit products
     if check_user()[0] and check_user()[0]['email'] == 'cain.m.burt@gmail.com':
         if request.method == "POST":
             form = request.form
@@ -287,6 +283,7 @@ def edit_product(id):
 
 @app.route('/editorderdetails/<oid>', methods=['GET', 'POST'])
 def edit_order_details(oid):
+    # edits the order details by getting the order from firestore based on the logged in users id and the order id
     user_id = check_user()[0]['user_id']
     order_id = oid
     order_list = []
@@ -320,8 +317,8 @@ def edit_order_details(oid):
         if product_list[i] not in product_list[i + 1:]:
             result.append(product_list[i])
 
+    # when the edit form is submitted, it sends that to the cloud function to update the order based on the order id and user id
     if request.method == "POST":
-
         user_id = check_user()[0]['user_id']
         order_id = oid
         name = request.form['name']

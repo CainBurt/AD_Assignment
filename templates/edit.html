@@ -1,29 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
+
+    <style>
+    .btn-sub {
+      background-color: #04AA6D;
+      color: white;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      width: 100%;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 17px;
+    }
+
+    .btn-sub:hover {
+      background-color: #45a049;
+}    </style>
     {% if feedback %}
     <p class="text-danger float-right">{{ feedback }}</p>
     {% endif %}
 
-    {{ data }}
-
     <h2> Edit Product Form </h2>
     {% for d in data %}
-    <form action="/editproduct/{{ d['id'] }}" method="POST">
+        <div class="container rounded bg-secondary mt-2">
+        <form action="/editproduct/{{ d['id'] }}" method="POST">
 
 
-        <label>Product Name</label>
-        <input type="text" id="name" name="name" value="{{ d['name'] }}"><br>
+            <label>Product Name</label>
+            <input type="text" id="name" name="name" value="{{ d['name'] }}" class="container" required><br>
 
-        <label>Product Description</label>
-        <textarea type="textarea" id="description" name="description">{{ d['description'] }}</textarea><br>
+            <label>Product Description</label>
+            <textarea type="textarea" id="description" name="description" class="container" required>{{ d['description'] }}</textarea><br>
 
-        <label>Product Image (URL)</label>
-        <input type="text" id="image" name="image" value="{{ d['image'] }}"><br>
+            <label>Product Image (URL)</label>
+            <input type="text" id="image" name="image" value="{{ d['image'] }}" class="container" required><br>
 
-        <label>Product Price (£)</label>
-        <input type="number" id="price" name="price" value="{{ d['price'] }}"><br>
-        <input type="submit" value="submit">
-    {% endfor %}
-    </form>
+            <label>Product Price (£)</label>
+            <input type="number" id="price" name="price" value="{{ d['price'] }}" class="container" required><br>
+            <input type="submit" value="submit" class="btn-sub">
+        {% endfor %}
+        </form>
+    </div>
 
 {% endblock %}
