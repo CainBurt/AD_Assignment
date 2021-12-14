@@ -220,7 +220,7 @@ def new_product_form():
         return render_template('/index.html', error_message="You are not a ADMIN!", user_data=check_user()[0])
 
 
-@app.route('/deleteproduct/<int:id>')
+@app.route('/deleteproduct/<id>')
 def delete_product(id):
     if check_user()[0] and check_user()[0]['email'] == 'cain.m.burt@gmail.com':
         url = "https://europe-west2-ad-cainburt.cloudfunctions.net/delete_product_mongoDB?id=" + str(id)
@@ -233,13 +233,17 @@ def delete_product(id):
 
 @app.route('/deleteorder/<oid>')
 def delete_order(oid):
-    user_id = check_user()[0]['user_id']
-    order_id = oid
-    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/delete_order_firebase?uid=" + user_id + "&oid=" + order_id
-    response = requests.get(url)
-    feedback = response.content
+    print(check_user()[0])
+    if check_user()[0]:
+        user_id = check_user()[0]['user_id']
 
-    return render_template('/profile.html', user_data=check_user()[0], feedback=feedback)
+        order_id = oid
+        url = "https://europe-west2-ad-cainburt.cloudfunctions.net/delete_order_firebase?uid=" + user_id + "&oid=" + order_id
+        response = requests.get(url)
+        feedback = response.content
+        return render_template('/profile.html', user_data=check_user()[0], feedback=feedback)
+    else:
+        return render_template('/index.html', error_message="You havent logged in", user_data=check_user()[0])
 
 
 @app.route('/editproduct/<int:id>', methods=['GET', 'POST'])
