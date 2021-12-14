@@ -12,6 +12,7 @@ app = Flask(__name__)
 
 app.secret_key = 'secret'
 
+
 # Initialize Firestore DB
 # cred = credentials.Certificate("C:/Users/Cain/Downloads/ad-cainburt-firebase-adminsdk-8g783-d131354892.json")
 # default_app = initialize_app(cred)
@@ -86,7 +87,7 @@ def profile():
         # removes duplicates
         result = []
         for i in range(len(product_list)):
-            if product_list[i] not in product_list[i+1:]:
+            if product_list[i] not in product_list[i + 1:]:
                 result.append(product_list[i])
 
         print(result)
@@ -280,7 +281,7 @@ def edit_product(id):
         return render_template('/index.html', error_message="You are not a ADMIN!", user_data=check_user()[0])
 
 
-@app.route('/editorderdetails/<oid>')
+@app.route('/editorderdetails/<oid>', methods=['GET', 'POST'])
 def edit_order_details(oid):
     user_id = check_user()[0]['user_id']
     order_id = oid
@@ -316,9 +317,23 @@ def edit_order_details(oid):
             result.append(product_list[i])
 
     if request.method == "POST":
-        return "Post data to database"
+
+        user_id = check_user()[0]['user_id']
+        order_id = oid
+        name = request.form['name']
+        email = request.form['email']
+        address = request.form['address']
+        city = request.form['city']
+        county = request.form['county']
+        postcode = request.form['zip']
+
+        url = "https://europe-west2-ad-cainburt.cloudfunctions.net/update_order_details_firestore?uid=" + user_id + "&oid=" + order_id + "&name=" + name + "&email=" + email + "&address=" + address + "&city=" + city + "&county=" + county + "&zip=" + postcode
+        response = requests.get(url)
+        feedback = response.content
+        return render_template('/profile.html', user_data=check_user()[0], feedback=feedback)
 
     return render_template('editorder.html', user_data=check_user()[0], orders=order_list, productlist=result)
+
 
 if __name__ == '__main__':
     app.run()

@@ -17,6 +17,7 @@
     {% for order in orders %}
         <div class="container rounded bg-secondary mt-2" id="{{ order['oid'] }}">
             <p>Tracking Number: {{ order['oid'] }}</p>
+            <p>Order Status: {{ order['order']['status'] }}</p>
             {% for product in order['order']['products_id'] %}
 
                 {% for k in productlist %}

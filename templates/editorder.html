@@ -11,7 +11,7 @@
                      {% endif %}
                 {% endfor %}
             {% endfor %}
-            <form action="/editorder/{{ order['oid'] }}" method="POST">
+            <form action="/editorderdetails/{{ order['oid'] }}" method="POST">
                 <h3>Personal Details:</h3>
                 <label>Name:</label>
                 <input type="text" id="name" name="name" value="{{ order['order']['name'] }}" class="container"><br>
