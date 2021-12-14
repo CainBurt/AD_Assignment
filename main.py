@@ -283,40 +283,6 @@ def edit_product(id):
 
 @app.route('/editorderdetails/<oid>', methods=['GET', 'POST'])
 def edit_order_details(oid):
-    # edits the order details by getting the order from firestore based on the logged in users id and the order id
-    check_user()
-    user_id = check_user()[0]['user_id']
-    order_id = oid
-    order_list = []
-    product_list = []
-    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_one_order_firestore?uid=" + user_id + "&oid=" + order_id
-    product = requests.get(url)
-    firebase_order = product.text
-    fbase_data = json.loads(firebase_order)
-    order_list.append({'oid': order_id, 'order': fbase_data})
-
-    # get the product info for the ids
-    for i in order_list:
-        for k, v in list(i['order'].items()):
-            if k == "products_id":
-                v = json.loads(v)
-                for i in v:
-                    url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(
-                        i)
-                    mongo_product = requests.get(url)
-                    jresponse = mongo_product.text
-                    data = json.loads(jresponse)
-
-                    # filters the ids and names and adds them to a list to return to html
-                    for p in data:
-                        prods = {'id': p['id'], 'name': p['name']}
-                        product_list.append(prods)
-
-    # removes duplicates
-    result = []
-    for i in range(len(product_list)):
-        if product_list[i] not in product_list[i + 1:]:
-            result.append(product_list[i])
 
     # when the edit form is submitted, it sends that to the cloud function to update the order based on the order id and user id
     if request.method == "POST":
@@ -333,8 +299,43 @@ def edit_order_details(oid):
         response = requests.get(url)
         feedback = response.content
         return render_template('/profile.html', user_data=check_user()[0], feedback=feedback)
+    else:
+        # edits the order details by getting the order from firestore based on the logged in users id and the order id
+        if check_user()[0]:
+            user_id = check_user()[0]['user_id']
+            order_id = oid
+            order_list = []
+            product_list = []
+            url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_one_order_firestore?uid=" + user_id + "&oid=" + order_id
+            product = requests.get(url)
+            firebase_order = product.text
+            fbase_data = json.loads(firebase_order)
+            order_list.append({'oid': order_id, 'order': fbase_data})
+            # get the product info for the ids
+            for i in order_list:
+                for k, v in list(i['order'].items()):
+                    if k == "products_id":
+                        v = json.loads(v)
+                        for i in v:
+                            url = "https://europe-west2-ad-cainburt.cloudfunctions.net/display_single_product_mongoDB?id=" + str(
+                                i)
+                            mongo_product = requests.get(url)
+                            jresponse = mongo_product.text
+                            data = json.loads(jresponse)
 
-    return render_template('editorder.html', user_data=check_user()[0], orders=order_list, productlist=result)
+                            # filters the ids and names and adds them to a list to return to html
+                            for p in data:
+                                prods = {'id': p['id'], 'name': p['name']}
+                                product_list.append(prods)
+
+            # removes duplicates
+            result = []
+            for i in range(len(product_list)):
+                if product_list[i] not in product_list[i + 1:]:
+                    result.append(product_list[i])
+            return render_template('editorder.html', user_data=check_user()[0], orders=order_list, productlist=result)
+        else:
+            return render_template('/index.html', error_message="You havent logged in", user_data=check_user()[0])
 
 
 if __name__ == '__main__':
