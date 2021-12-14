@@ -284,6 +284,7 @@ def edit_product(id):
 @app.route('/editorderdetails/<oid>', methods=['GET', 'POST'])
 def edit_order_details(oid):
     # edits the order details by getting the order from firestore based on the logged in users id and the order id
+    check_user()
     user_id = check_user()[0]['user_id']
     order_id = oid
     order_list = []
@@ -293,7 +294,7 @@ def edit_order_details(oid):
     firebase_order = product.text
     fbase_data = json.loads(firebase_order)
     order_list.append({'oid': order_id, 'order': fbase_data})
-    print(order_list)
+
     # get the product info for the ids
     for i in order_list:
         for k, v in list(i['order'].items()):
